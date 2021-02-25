@@ -1,0 +1,646 @@
+drop table if exists tx_client;
+CREATE TABLE public.tx_client (
+    id serial NOT NULL,
+    code uuid NOT null default uuid_generate_v4(),
+    company varchar(100) NULL DEFAULT NULL::character varying,
+    gender varchar(10) NULL DEFAULT NULL::character varying,
+    firstname varchar(70) NOT NULL,
+    lastname varchar(70) NOT NULL,
+    phone varchar(15) NOT NULL,
+    registry varchar(20) NOT NULL,
+    "password" varchar(300) NOT NULL,
+    image varchar (300) NOT NULL,
+    address varchar(255) NOT NULL,
+    city varchar(255) NOT NULL,
+    zip_code int4 NOT NULL,
+    active bool NOT NULL DEFAULT true,
+    complete bool null DEFAULT true,
+    api_key varchar(300) NULL DEFAULT NULL::character varying,
+    pro_card varchar(40) NOT NULL,
+    pro_card_got_at date NOT NULL,
+    pro_card_expire_at date NULL,
+    country varchar(46) NULL DEFAULT NULL::character varying,
+    created_at timestamp NOT NULL,
+    updated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+    CONSTRAINT tx_client_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_tx_client ON public.tx_client(code);
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+
+
+drop table if exists tx_user;
+CREATE TABLE public.tx_user (
+    id serial NOT NULL,
+    client_id int4 NULL,
+    code uuid NOT null default uuid_generate_v4(),
+    firstname varchar(70) NOT NULL,
+    lastname varchar(70) NOT NULL,
+    mail varchar(120) NULL DEFAULT NULL::character varying,
+    "password" varchar(200) NULL DEFAULT NULL::character varying,
+    "token" varchar(300) NULL DEFAULT NULL::character varying,
+    address varchar(255) NOT NULL ,
+    enabled bool default false,
+    active bool default false,
+    "enable" bool NOT null default true,
+    phone varchar(15) NOT NULL,
+    image varchar (300) NOT NULL,
+    "role" varchar(50) NOT NULL,
+    licence varchar(255),
+    licence_got_at date NULL,
+    licence_expired_at date NOT NULL,
+    created_at timestamp NOT NULL,
+    updated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+    CONSTRAINT tx_user_pkey PRIMARY KEY (id),
+    CONSTRAINT tx_user_uk_phone unique (phone),
+    CONSTRAINT tx_user_uk_licence unique (licence)
+);
+
+
+
+CREATE INDEX idx_client_user ON public.tx_user USING btree (client_id);
+
+
+
+ALTER TABLE public.tx_user ADD CONSTRAINT fk_client_user FOREIGN KEY (client_id) REFERENCES tx_client(id);
+
+
+
+
+ ------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+
+
+drop table if exists back_user;
+CREATE TABLE public.back_user (
+	id serial NOT NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	firstname varchar(50) NOT NULL,
+	lastname varchar(50) NOT NULL,
+	login varchar(50) NOT NULL,
+	mail varchar(70) NOT NULL,
+	"password" varchar(200) NULL DEFAULT NULL::character varying,
+	active bool NOT NULL,
+	phone varchar(15) NOT NULL,
+	"token" varchar(300) NULL,
+	img varchar(150) NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT back_user_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_back_user ON back_user(code)
+
+--------------------------------------------------------------------------------------------------------------------------
+
+-- public.back_user_groups definition
+
+-- Drop table
+
+-- DROP TABLE public.back_user_groups;
+
+drop table if exists back_user_groups;
+CREATE TABLE public.back_user_groups (
+	id serial NOT NULL,
+	user_id int4 NOT NULL,
+	group_id int4 NOT NULL,
+	created_at timestamptz null,
+
+  FOREIGN KEY (user_id) REFERENCES back_user (id) ON DELETE CASCADE,
+  FOREIGN KEY (group_id) REFERENCES back_groups (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_back_user_group ON public.back_user_groups(id) ;
+
+-- public.back_user_groups foreign keys
+
+-- ALTER TABLE public.back_user_groups ADD CONSTRAINT back_user_groups_group_id_fkey null;
+-- ALTER TABLE public.back_user_groups ADD CONSTRAINT back_user_groups_user_id_fkey null;
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
+
+-- tx_taxi
+
+
+DROP TABLE if exists public.tx_taxi;
+CREATE TABLE public.tx_taxi (
+    id serial NOT NULL,
+    code uuid NOT NULL DEFAULT uuid_generate_v4(),
+    licence varchar(70) NOT NULL,
+    licence_got_at date NOT NULL,
+    licence_expire_at date NOT NULL,
+    car_number varchar(100) NOT NULL,
+    brand varchar(50) NOT NULL,
+    model varchar(100) NOT NULL,
+    serial_number varchar(100) NOT NULL,
+    active bool NOT NULL,
+    places int4 NOT NULL,
+    client_id int4 NULL,
+    profile_id int4 NULL,
+    registration_number varchar(80) NULL DEFAULT NULL::character varying,
+    tire_size varchar(80) NULL DEFAULT NULL::character varying,
+    inflation_presser varchar(80) NULL DEFAULT NULL::character varying,
+    wheel_revolution_length varchar(80) NULL DEFAULT NULL::character varying,
+    coefficient_k int4 NULL,
+    coefficient_k_determination_date date NULL,
+    created_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL,
+    CONSTRAINT tx_taxi_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_a6b9402e19eb6921 ON public.tx_taxi (client_id int4_ops);
+CREATE INDEX idx_a6b9402eccfa12b8 ON public.tx_taxi (profile_id int4_ops);
+
+
+
+--ALTER TABLE public.tx_taxi ADD CONSTRAINT fk_a6b9402e19eb6921 ;
+--ALTER TABLE public.tx_taxi ADD CONSTRAINT fk_a6b9402eccfa12b8 null;
+
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+
+
+
+-- Drop table
+
+
+
+-- DROP TABLE public.tx_trip;
+drop table if exists tx_trip;
+CREATE TABLE public.tx_trip (
+    id serial NOT NULL,
+    taxi_id int4 NULL,
+    code uuid NOT null default uuid_generate_v4(),
+    driver_id int4 NOT NULL,
+    total_price float8 NOT NULL,
+    tax float8 NULL,
+    start_polygon_id int4 NOT NULL,
+    end_polygon_id int4 NOT NULL,
+    time_spend_seconds int4 NULL,
+    passengers_number int4 NULL,
+    reservation bool NULL,
+    flat_fee bool NULL,
+    flat_fee_label varchar(255) NOT NULL DEFAULT NULL::character varying,
+    created_at timestamp NOT NULL,
+    departure_position json NOT NULL,
+    arrival_position json NOT NULL,
+    arrival_address varchar(200) NOT NULL,
+    traveled_distance_meters int4 NULL,
+    departure_address varchar(200) NOT NULL,
+    completed bool NOT null default true,
+    begin_at timestamptz NOT NULL,
+    end_at timestamptz NOT NULL,
+    CONSTRAINT tx_trip_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_taxi_trip ON public.tx_trip USING btree (taxi_id);
+
+
+
+ALTER TABLE public.tx_trip ADD CONSTRAINT fk_taxi_trip FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+
+ ------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------
+
+
+-- DROP TABLE public.tx_tripsteps;
+drop table if exists tx_trip_steps;
+CREATE TABLE public.tx_trip_steps (
+    id serial NOT NULL,
+    code uuid NOT null default uuid_generate_v4(),
+    type_tarif varchar(50) NOT NULL,
+    traveled_destance_meters int4 NOT NULL,
+    time_spend_seconds int4 NOT NULL,
+    price float8 NOT NULL,
+    applied_tariff varchar(100) NOT NULL,
+    start_position json NOT NULL,
+    end_position json NOT NULL,
+    created_at timestamp NOT NULL,
+    trips_id int4 NULL,
+    CONSTRAINT tx_trip_steps_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_trip_steps_trip ON public.tx_trip_steps USING btree (trips_id);
+
+
+
+ALTER TABLE public.tx_trip_steps ADD CONSTRAINT fk_trip_steps_trip FOREIGN KEY (trips_id) REFERENCES tx_trip(id);
+
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+
+drop table if exists tx_reservation;
+CREATE TABLE public.tx_reservation(
+id serial NOT NULL,
+tx_taxi_id int4 NULL,
+code uuid NOT null default uuid_generate_v4(),
+departure_address varchar(200) NOT NULL,
+arrival_address varchar(200) NOT NULL,
+status  bool NOT null default true,
+passengers_number int4 NULL,
+created_at timestamp NOT NULL,
+updated_at timestamp NULL,
+
+
+CONSTRAINT tx_reservation_pkey PRIMARY KEY (id)
+);
+
+
+
+CREATE INDEX idx_taxi_reservation ON public.tx_reservation USING btree (tx_taxi_id);
+
+
+
+ALTER TABLE public.tx_reservation ADD CONSTRAINT fk_taxi_reservation FOREIGN KEY (tx_taxi_id) REFERENCES tx_taxi(id);
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_tablet definition
+
+-- Drop table
+
+-- DROP TABLE public.tx_tablet;
+
+drop table if exists  tx_tablet;
+CREATE TABLE public.tx_tablet (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL DEFAULT uuid_generate_v4(),
+	imei1 varchar(50) NOT NULL,
+	imei2 varchar(50) NOT NULL,
+	reference varchar(45) NOT NULL,
+	active bool default false,
+	activated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+	CONSTRAINT tx_tablet_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_4a8fa32d506ff81c ON public.tx_tablet USING btree (taxi_id);
+
+
+-- public.tx_tablet foreign keys
+
+ALTER TABLE public.tx_tablet ADD CONSTRAINT fk_36a446ee506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_limunous definition
+
+-- Drop table
+
+-- DROP TABLE public.tx_limunous;
+
+drop table if exists  tx_limunous;
+CREATE TABLE public.tx_limunous (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	"type" varchar(80) NOT NULL,
+	brand varchar(80) NOT NULL,
+	model varchar(80) NOT NULL,
+	serial_number varchar(100) NOT NULL,
+	"location" varchar(80) NULL DEFAULT NULL::character varying,
+	service_date timestamp NULL,
+	created_at timestamp NOT NULL,
+	update_at timestamp NULL,
+	CONSTRAINT tx_limunous_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_720db5b7506ff81c ON public.tx_limunous USING btree (taxi_id);
+
+
+-- public.tx_limunous foreign keys
+
+ALTER TABLE public.tx_limunous ADD CONSTRAINT fk_720db5b7506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_printer definition
+
+-- Drop table
+
+-- DROP TABLE public.tx_printer;
+
+drop table if exists tx_printer;
+CREATE TABLE public.tx_printer (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	brande int4 NOT NULL,
+	model varchar(100) NOT NULL,
+	adress varchar(255) NOT NULL,
+	"location" varchar(80) NULL DEFAULT NULL::character varying,
+	service_date timestamp NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_printer_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_cb756ba0506ff81c ON public.tx_printer USING btree (taxi_id);
+
+
+-- public.tx_printer foreign keys
+
+ALTER TABLE public.tx_printer ADD CONSTRAINT fk_cb756ba0506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+-- public.tx_taximetre definition
+
+-- Drop table
+
+DROP TABLE if exists public.tx_taximetre;
+CREATE TABLE public.tx_taximetre (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	brand varchar(80) NOT NULL,
+	model varchar(80) NULL DEFAULT NULL::character varying,
+	rental_number varchar(50) NULL DEFAULT NULL::character varying,
+	type_certification_number varchar(50) NULL DEFAULT NULL::character varying,
+	service_date timestamp NULL,
+	taximetre_sticker bool NULL,
+	taximetre_sticker_got_at date NULL,
+	taximetre_sticker_expire_at date NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_taximetre_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_f661a57506ff81c ON public.tx_taximetre USING btree (taxi_id);
+
+
+-- public.tx_taximetre foreign keys
+
+ALTER TABLE public.tx_taximetre ADD CONSTRAINT fk_f661a57506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_taxi_notebook definition
+
+-- Drop table
+
+DROP TABLE if exists public.tx_taxi_notebook;
+
+CREATE TABLE public.tx_taxi_notebook (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	organisation_id varchar(100) NOT NULL,
+	organisation_name varchar(100) NOT NULL,
+	organisation_address json NULL,
+	note_book_service_date date NULL,
+	reason_for_commissioning varchar(255) NULL DEFAULT NULL::character varying,
+	service_date date NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_taxi_notebook_pkey PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX uniq_c1bbbc17506ff81c ON public.tx_taxi_notebook USING btree (taxi_id);
+
+
+-- public.tx_taxi_notebook foreign keys
+
+ALTER TABLE public.tx_taxi_notebook ADD CONSTRAINT fk_c1bbbc17506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+---------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_intervention definition
+
+-- Drop table
+
+DROP TABLE if exists public.tx_intervention;
+
+CREATE TABLE public.tx_intervention (
+	id serial NOT NULL,
+	note_book_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	intervention_type varchar(100) NULL DEFAULT NULL::character varying,
+	installer_first_name varchar(100) NOT NULL,
+	installer_last_name varchar(100) NOT NULL,
+	coefficient_k int4 NOT NULL,
+	new_coefficient_k int4 NOT NULL,
+	verification_notice varchar(255) NULL DEFAULT NULL::character varying,
+	refusal_reason varchar(255) NULL DEFAULT NULL::character varying,
+	tx_box_version varchar(255) NULL DEFAULT NULL::character varying,
+	intervention_date timestamp NOT NULL,
+	CONSTRAINT tx_intervention_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_intervention ON public.tx_intervention USING btree (note_book_id);
+
+
+-- public.tx_intervention foreign keys
+
+ALTER TABLE public.tx_intervention ADD CONSTRAINT fk_6f221db1121a21e FOREIGN KEY (note_book_id) REFERENCES tx_taxi_notebook(id);
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_reparation definition
+
+-- Drop table
+
+DROP table if exists public.tx_reparation;
+
+CREATE TABLE public.tx_reparation (
+	id serial NOT NULL,
+	intervention_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	repartion_object varchar(255) NOT NULL,
+	verification_date timestamp NOT NULL,
+	CONSTRAINT tx_reparation_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_dreparation ON public.tx_reparation USING btree (intervention_id);
+
+
+-- public.tx_reparation foreign keys
+
+ALTER TABLE public.tx_reparation ADD CONSTRAINT fk_d06cc793a2182d3 FOREIGN KEY (intervention_id) REFERENCES tx_intervention(id);
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_impulsioncalculator definition
+
+-- Drop table
+
+DROP TABLE if exists public.tx_impulsioncalculator;
+
+CREATE TABLE public.tx_impulsioncalculator (
+	id serial NOT NULL,
+	taxi_id int4 NULL,
+	code uuid NOT NULL default uuid_generate_v4(),
+	model varchar(80) NULL DEFAULT NULL::character varying,
+	serial_number varchar(80) NOT NULL,
+	"location" varchar(80) NULL DEFAULT NULL::character varying,
+	service_date date NULL,
+	created_at timestamp NOT NULL,
+	update_at timestamp NULL,
+	CONSTRAINT tx_impulsioncalculator_pkey PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX uniq_35f9183a506ff81c ON public.tx_impulsioncalculator USING btree (taxi_id);
+
+
+-- public.tx_impulsioncalculator foreign keys
+
+ALTER TABLE public.tx_impulsioncalculator ADD CONSTRAINT fk_35f9183a506ff81c FOREIGN KEY (taxi_id) REFERENCES tx_taxi(id);
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_profil definition
+
+-- Drop table
+
+drop  table if exists public.tx_profil;
+
+CREATE TABLE public.tx_profil (
+	id serial NOT null,
+	code uuid NOT null default uuid_generate_v4(),
+	"label" varchar(150) NOT NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+	CONSTRAINT tx_profil_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_tx_profil ON public.tx_profil(code);
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_country definition
+
+-- Drop table
+
+drop  table if exists public.tx_country;
+
+CREATE TABLE public.tx_country (
+	id serial NOT null,
+	code uuid NOT null default uuid_generate_v4(),
+	"label" varchar(200) NOT NULL,
+	lang varchar(25) NOT NULL,
+	flag varchar(200) NOT NULL,
+	currency varchar(25) NOT NULL,
+	VAT varchar(25) NOT NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL DEFAULT NULL::timestamp without time zone,
+	profil int unique ,
+	CONSTRAINT tx_country_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_tx_country ON public.tx_country(code);
+
+ALTER TABLE public.tx_country ADD CONSTRAINT fk_counyry_one_to_one_profil FOREIGN KEY (profil) REFERENCES tx_profil(id);
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_tarif definition
+
+-- Drop table
+
+DROP table if exists public.tx_tarif;
+CREATE TABLE public.tx_tarif (
+	id serial NOT NULL,
+	profil_id int4 NULL,
+	code uuid NOT NULL DEFAULT uuid_generate_v4(),
+	"label" varchar(100) NOT NULL,
+	kilometre_price float8 NOT NULL,
+	hourly_price float8 NOT NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_tarif_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_a7341ab9275ed078 ON public.tx_tarif USING btree (profil_id);
+
+
+-- public.tx_tarif foreign keys
+
+ALTER TABLE public.tx_tarif ADD CONSTRAINT fk_a7341ab9275ed078 FOREIGN KEY (profil_id) REFERENCES tx_profil(id);
+
+------------------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------
+-- public.tx_polygon definition
+
+-- Drop table
+
+DROP table if exists public.tx_polygon;
+
+CREATE TABLE public.tx_polygon (
+	id serial NOT NULL,
+	tarif_id int4 NULL,
+	code uuid NOT NULL DEFAULT uuid_generate_v4(),
+	"label" varchar(100) NOT NULL,
+	coordinates json NOT NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_polygon_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_4e200ac3357c0a59 ON public.tx_polygon USING btree (tarif_id);
+
+
+-- public.tx_polygon foreign keys
+
+ALTER TABLE public.tx_polygon ADD CONSTRAINT fk_4e200ac3357c0a59 FOREIGN KEY (tarif_id) REFERENCES tx_tarif(id);
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+-- public.tx_flatfee definition
+
+-- Drop table
+
+DROP table if exists public.tx_flatfee;
+
+CREATE TABLE public.tx_flatfee (
+	id serial NOT NULL,
+	profile_id int4 NULL,
+	code uuid NOT NULL DEFAULT uuid_generate_v4(),
+	"label" varchar(255) NULL DEFAULT NULL::character varying,
+	start_polygon json NOT NULL,
+	end_polygon json NOT NULL,
+	price float8 NULL,
+	created_at timestamp NOT NULL,
+	updated_at timestamp NULL,
+	CONSTRAINT tx_flatfee_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_5d4fe9bcccfa12b8 ON public.tx_flatfee USING btree (profile_id);
+
+
+-- public.tx_flatfee foreign keys
+
+ALTER TABLE public.tx_flatfee ADD CONSTRAINT fk_5d4fe9bcccfa12b8 FOREIGN KEY (profile_id) REFERENCES tx_profil(id);
+
+
+
+
