@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use SSH\CommonBundle\Entity\AbstractEntity;
 
 /**
  * Quiz
@@ -11,7 +10,7 @@ use SSH\CommonBundle\Entity\AbstractEntity;
  * @ORM\Table(name="quiz", indexes={@ORM\Index(name="idx_quiz", columns={"code"})})
  * @ORM\Entity(repositoryClass="App\Repository\QuizRepository")
  */
-class Quiz extends AbstractEntity
+class Quiz 
 {
     /**
      * @var int

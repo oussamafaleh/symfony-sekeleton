@@ -4,9 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Quiz;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\ResultSetMapping;
-use SSH\CommonBundle\Utils\MyTools;
+//use SSH\CommonBundle\Utils\MyTools;
 
 /**
  * @method Quiz|null find($id, $lockMode = null, $lockVersion = null)

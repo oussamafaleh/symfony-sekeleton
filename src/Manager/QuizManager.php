@@ -81,16 +81,16 @@ class QuizManager extends AbstractManager
      */
     public function list()
     {
-//        $filters = (array) $this->request->get('quizs');
-//        
-//        $data = $this->apiEntityManager
-//                ->getRepository(Quiz::class)
-//                ->findByFilters($filters);
-//
-//
-//        $data = \SSH\CommonBundle\Utils\MyTools::paginator($data, $filters['index'], $filters['size']);
-//        return ['data' => $data];
-        return ['data' => "hello word"];
+       // $filters = (array) $this->request->get('quizs');
+        
+        $data = $this->apiEntityManager
+                ->getRepository(Quiz::class)
+                ->findAll();
+
+
+        //$data = \SSH\CommonBundle\Utils\MyTools::paginator($data, $filters['index'], $filters['size']);
+        return ['data' => $data];
+        //return ['data' => "hello word"];
     }
 
 
