@@ -9,7 +9,7 @@ services:
             - { name: kernel.event_listener, event: kernel.view, method: onKernelView }
      
 
-    App\Manager\QuizManager:
+    App\Manager\DemoManager:
         public: true
-        class: App\Manager\QuizManager
+        class: App\Manager\DemoManager
         arguments: [ '@doctrine',  '@request_stack']

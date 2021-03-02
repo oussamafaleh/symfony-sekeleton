@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use SSH\CommonBundle\Model\Traits\ApiList;
 use SSH\CommonBundle\Request\CommonParameterBag;
 
-class Quizs extends CommonParameterBag
+class Demo extends CommonParameterBag
 {
 
     use ApiList;
@@ -17,15 +17,8 @@ class Quizs extends CommonParameterBag
      * @Assert\Regex({
      *    "pattern":"/^[0-9a-zA-Z- _]+/"
      * })
-     * @Assert\Regex("/^[0-9a-zA-Z- _]+/")
+     * @Assert\Regex("/^[a-zA-Z]+/")
      */
-    public $code;
-
-    /**
-     * @var string
-     *
-     * @Assert\Regex("/^(code|label|created_at)/")
-     */
-    public $sort_column = 'created_at';
+    public $demo;
 
 }

@@ -2,16 +2,11 @@
 
 namespace App\Manager;
 
-use App\Entity\Quiz;
-use App\Entity\Bloc;
-use App\Entity\Question;
-use App\Entity\Description;
+use App\Entity\Demo;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-//use SSH\CommonBundle\Manager\ExceptionManager;
-//use SSH\CommonBundle\Utils\MyTools;
 
-class QuizManager extends AbstractManager
+class DemoManager extends AbstractManager
 {
 
     /** @var string */
@@ -22,15 +17,15 @@ class QuizManager extends AbstractManager
     private $quiz;
 
 
-    public function __construct(Registry $entityManager,/* ExceptionManager $exceptionManager,*/ RequestStack $requestStack)
+    public function __construct(Registry $entityManager, RequestStack $requestStack)
     {
-        parent::__construct($entityManager, /*$exceptionManager,*/ $requestStack);
+        parent::__construct($entityManager, $requestStack);
     }
 
     /**
      * ClientModel initializer.
      */
-    public function init($settings = [])
+  /*  public function init($settings = [])
     {
         parent::setSettings($settings);
         if ($this->getCode()) {
@@ -40,13 +35,10 @@ class QuizManager extends AbstractManager
                     ->getRepository(Quiz::class)
                     ->findOneBy(["code" => $this->getCode()]);
 
-//            if (!$this->quiz instanceof Quiz) {
-//                $this->exceptionManager->throwNotFoundException('UNKNOWN_QUIZ');
-//            }
         }
 
         return $this;
-    }
+    }*/
 
     /**
      * Set code
@@ -84,13 +76,12 @@ class QuizManager extends AbstractManager
        // $filters = (array) $this->request->get('quizs');
         
         $data = $this->apiEntityManager
-                ->getRepository(Quiz::class)
+                ->getRepository(Demo::class)
                 ->findAll();
+                dump($data);
+                exit();
 
-
-        //$data = \SSH\CommonBundle\Utils\MyTools::paginator($data, $filters['index'], $filters['size']);
         return ['data' => $data];
-        //return ['data' => "hello word"];
     }
 
 
