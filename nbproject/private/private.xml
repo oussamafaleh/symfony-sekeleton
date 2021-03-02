@@ -4,7 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/config/services/manager.yml</file>
+            <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/Manager/QuizManager.php</file>
+            <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/ApiModel/Back/Quizs/Quiz.php</file>
             <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/EventListener/ViewListener.php</file>
+            <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/Request/CommonParameterBag.php</file>
+            <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/Controller/API/QuizController.php</file>
+            <file>file:/home/oussama/Documents/work/talan-work/code/skeleton/skeleton/src/Request/CommonParameterBagInterface.php</file>
         </group>
     </open-files>
 </project-private>

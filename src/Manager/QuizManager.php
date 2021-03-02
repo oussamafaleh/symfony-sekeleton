@@ -8,8 +8,10 @@ use App\Entity\Question;
 use App\Entity\Description;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-//use SSH\CommonBundle\Manager\ExceptionManager;
-//use SSH\CommonBundle\Utils\MyTools;
+use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
+use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\Workflow;
 
 class QuizManager extends AbstractManager
 {
@@ -22,9 +24,9 @@ class QuizManager extends AbstractManager
     private $quiz;
 
 
-    public function __construct(Registry $entityManager,/* ExceptionManager $exceptionManager,*/ RequestStack $requestStack)
+    public function __construct(Registry $entityManager, RequestStack $requestStack)
     {
-        parent::__construct($entityManager, /*$exceptionManager,*/ $requestStack);
+        parent::__construct($entityManager,  $requestStack);
     }
 
     /**
@@ -40,9 +42,6 @@ class QuizManager extends AbstractManager
                     ->getRepository(Quiz::class)
                     ->findOneBy(["code" => $this->getCode()]);
 
-//            if (!$this->quiz instanceof Quiz) {
-//                $this->exceptionManager->throwNotFoundException('UNKNOWN_QUIZ');
-//            }
         }
 
         return $this;
